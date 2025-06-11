@@ -20,7 +20,11 @@ function renderGoodsItem(item) {
 // Отображение списка товаров на странице
 function renderGoodsList(list) {
     const goodsList = document.querySelector('.goods-list');
-    goodsList.innerHTML = list.map(item => renderGoodsItem(item)).join('');
+    let html = '';
+    for (let i = 0; i < list.length; i++) {
+        html += renderGoodsItem(list[i]);
+    }
+    goodsList.innerHTML = html;
 }
 
 // Ддобавление товара в корзину
@@ -51,23 +55,37 @@ function updateCartUI() {
     const cartTotalPrice = document.getElementById('cartTotalPrice');
 
     // Рендер для каждого товара в корзине
-    cartItemsContainer.innerHTML = cartItems.map(item => `
+    let cartItemsHTML = '';
+    for (let i = 0; i < cartItems.length; i++) {
+        const item = cartItems[i];
+        cartItemsHTML += `
                 <div class="cart-item" data-id="${item.product.id_product}">
                     <span>${item.product.product_name}</span>
                     <span>${item.product.price}₽ x${item.quantity}</span>
                     <button class="remove-button" onclick="removeFromCart(${item.product.id_product})">x</button>
                 </div>
-            `).join('');
+            `;
+    }
+    cartItemsContainer.innerHTML = cartItemsHTML;
 
     // Общая сумма заказа
-    const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    let total = 0;
+    for (let i = 0; i < cartItems.length; i++) {
+        total += cartItems[i].product.price * cartItems[i].quantity;
+    }
     cartTotalPrice.textContent = `${total}₽`;
 }
 
 // Удаление товара из корзины
 function removeFromCart(productId) {
     // Фильтр массива, для удаления товара с указанным ID
-    cartItems = cartItems.filter(item => item.product.id_product !== productId);
+    const newCartItems = [];
+    for (let i = 0; i < cartItems.length; i++) {
+        if (cartItems[i].product.id_product !== productId) {
+            newCartItems.push(cartItems[i]);
+        }
+    }
+    cartItems = newCartItems;
     updateCartUI();
 }
 
@@ -84,7 +102,10 @@ function closeCart() {
 // Оформление заказа
 function checkout() {
     // Общая сумма
-    const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    let total = 0;
+    for (let i = 0; i < cartItems.length; i++) {
+        total += cartItems[i].product.price * cartItems[i].quantity;
+    }
     // Сообщение о успешном оформлении
     alert(`Заказ оформлен! Сумма: ${total}₽`);
     // Очистка корзины
