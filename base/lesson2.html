@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // Задание 1
+        {
+            // Пример 1
+            let a = 1, b = 1, c, d;
+            c = ++a; // Префиксный инкремент: сначала увеличиваем 'a' на 1 (a становится 2), затем присваиваем
+            console.log(c); // 2
+
+            // Пример 2
+            d = b++; // Постфиксный инкремент: сначала присваиваем текущее значение 'b' (1), затем увеличиваем на 1
+            console.log(d); // 1
+
+            // Пример 3
+            c = 2 + ++a; // Сначала увеличиваем 'a' с 2 до 3, затем прибавляем 2
+            console.log(c); // 5
+
+            // Пример 4
+            d = 2 + b++; // 'b' было 2 (после первого инкремента), прибавляем 2 (получаем 4), затем увеличиваем 'b'
+            console.log(d); // 4
+
+            console.log(a); // 3 (два раза увеличивали)
+            console.log(b); // 3 (два раза увеличивали)
+        }
+
+        // Задание 2
+        {
+            let a = 2;
+            let x = 1 + (a *= 2); // Сначала выполняется a *= 2 (a становится 4), затем 1 + 4
+            console.log(`a = ${a}, x = ${x}`); // a = 4, x = 5
+        }
+
+        // Задание 3
+        {
+            let a = Math.floor(Math.random() * 20) - 10; // Случайное число от -10 до 10
+            let b = Math.floor(Math.random() * 20) - 10;
+
+            console.log(`a = ${a}, b = ${b}`);
+
+            if (a >= 0 && b >= 0) {
+                console.log(a - b); // Оба положительные - разность
+            } else if (a < 0 && b < 0) {
+                console.log(a * b); // Оба отрицательные - произведение
+            } else {
+                console.log(a + b); // Разные знаки - сумма
+            }
+        }
+
+        // Задание 4
+        {
+            function add(a, b) { return a + b; }
+            function subtract(a, b) { return a - b; }
+            function multiply(a, b) { return a * b; }
+            function divide(a, b) { return a / b; }
+
+            // Проверка функций
+            console.log(`5 + 3 = ${add(5, 3)}`);
+            console.log(`5 - 3 = ${subtract(5, 3)}`);
+            console.log(`5 * 3 = ${multiply(5, 3)}`);
+            console.log(`5 / 3 = ${divide(5, 3)}`);
+        }
+
+        // Задание 5
+        {
+            function mathOperation(arg1, arg2, operation) {
+                switch (operation) {
+                    case 'add': return add(arg1, arg2);
+                    case 'subtract': return subtract(arg1, arg2);
+                    case 'multiply': return multiply(arg1, arg2);
+                    case 'divide': return divide(arg1, arg2);
+                    default: return NaN;
+                }
+            }
+
+            // Проверка
+            console.log(`mathOperation(10, 5, 'add') = ${mathOperation(10, 5, 'add')}`);
+            console.log(`mathOperation(10, 5, 'subtract') = ${mathOperation(10, 5, 'subtract')}`);
+            console.log(`mathOperation(10, 5, 'multiply') = ${mathOperation(10, 5, 'multiply')}`);
+            console.log(`mathOperation(10, 5, 'divide') = ${mathOperation(10, 5, 'divide')}`);
+        }
+
+    </script>
+</body>
+
+</html>
