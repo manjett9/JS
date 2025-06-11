@@ -9,10 +9,26 @@
 <body>
     <header>
         <div class="store-name">eShop</div>
-        <button class="cart-button" type="button">Корзина</button>
+        <button class="cart-button" onclick="openCart()">Корзина</button>
     </header>
     <main>
         <div class="goods-list"></div>
+        <div class="cart-modal" id="cartModal">
+            <div class="cart-content">
+                <div class="cart-header">
+                    <h2>Ваша корзина</h2>
+                    <span class="close-cart" onclick="closeCart()">x</span>
+                </div>
+                <div class="cart-body" id="cartItems"></div>
+                <div class="cart-footer">
+                    <div class="cart-total">
+                        <span>Итого:</span>
+                        <span id="cartTotalPrice">0₽</span>
+                    </div>
+                    <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
+                </div>
+            </div>
+        </div>
     </main>
     <script src="script.js"></script>
 </body>
