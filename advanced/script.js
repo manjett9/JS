@@ -13,7 +13,7 @@ function renderGoodsItem(item) {
             </div>
                 <h3>${item.product_name}</h3>
                 <p>${item.price}₽</p>
-                <button onclick="addToCart(${item.id_product})">Добавить в корзину</button>
+                <button class="add-button" onclick="addToCart(${item.id_product})">Добавить в корзину</button>
             </div>`;
 }
 
@@ -44,6 +44,8 @@ function addToCart(productId) {
                 quantity: 1
             });
         }
+        // Уведомление
+        showNotification(`Ваш товар успешно добавлен в корзину!`)
         // Обновление отображения корзины
         updateCartUI();
     }
@@ -86,6 +88,8 @@ function removeFromCart(productId) {
         }
     }
     cartItems = newCartItems;
+    // Уведомление
+    showNotification(`Вы успешно удалили товар из корзины!`)
     updateCartUI();
 }
 
@@ -106,14 +110,14 @@ function checkout() {
     for (let i = 0; i < cartItems.length; i++) {
         total += cartItems[i].product.price * cartItems[i].quantity;
     }
-    // Сообщение о успешном оформлении
-    alert(`Заказ оформлен! Сумма: ${total}₽`);
     // Очистка корзины
     cartItems = [];
     // Обновление интерфейса
     updateCartUI();
     // Закрытие модального окна
     closeCart();
+    // Сообщение о успешном оформлении
+    showNotification(`Заказ успешно оформлен! Сумма: ${total}₽`)
 }
 
 // Загрузки товаров с сервера
@@ -130,5 +134,27 @@ async function loadGoods() {
     }
 }
 
+function showNotification(text) {
+    // Настройка уведомления
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.innerHTML = text + '<div class="progress-bar"></div>';
+    document.body.appendChild(notification);
+
+    // Задержка анимации
+    setTimeout(() => {
+        notification.classList.add('show');
+        notification.querySelector('.progress-bar').style.transform = 'scaleX(0)';
+    }, 10);
+
+    // Закрытие уведомления
+    notification.onclick = () => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    };
+
+    // Автозакрытие через 5 секунд
+    setTimeout(() => notification.onclick(), 5000);
+}
 // Загрузка товаров при загрузке страницы
 loadGoods();
