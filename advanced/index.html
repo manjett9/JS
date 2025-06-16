@@ -9,6 +9,10 @@
 <body>
     <header>
         <div class="store-name">eShop</div>
+        <div class="search-box">
+            <input type="text" class="search-area" id="search-area" placeholder="Найти товары..."
+                oninput="searchGoods()">
+        </div>
         <button class="cart-button" onclick="openCart()">Корзина</button>
     </header>
     <main>
@@ -25,7 +29,29 @@
                         <span>Итого:</span>
                         <span id="cartTotalPrice">0₽</span>
                     </div>
-                    <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
+                    <button class="checkout-btn" onclick="openCartOrder()">Оформить заказ</button>
+                </div>
+            </div>
+        </div>
+        <div class="cart-modal-order" id="cartModalOrder">
+            <div class="cart-content-order">
+                <div class="cart-header-order">
+                    <span class="close-cart-order" onclick="closeCartOrder()">↩</span>
+                    <h2>Оформление заказа</h2>
+                </div>
+                <div class="cart-body-order" id="cartItemsOrder">
+                    <span>Имя:</span>
+                    <input type="text" class="form-area" id="nameArea" placeholder="Ваше имя"
+                        oninput="removeError(this)">
+                    <span>Телефон:</span>
+                    <input type="tel" id="numberArea" name="phone" placeholder="+7 (XXX)XXX-XXXX"
+                        oninput="removeError(this)">
+                    <span>Email:</span>
+                    <input type="email" class="form-area" id="emailArea" placeholder="Ваш Email"
+                        oninput="removeError(this)">
+                </div>
+                <div class="cart-footer-order">
+                    <button class="checkout-btn-order" onclick="validateForm()">Заказать</button>
                 </div>
             </div>
         </div>
