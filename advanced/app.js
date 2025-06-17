@@ -46,7 +46,9 @@ Vue.component('order-form', {
           <div class="form-group" :class="{ 'error': errors.phone }">
             <label>Телефон:</label>
             <input type="tel" class="form-area" v-model="form.phone" 
-                   @input="clearError('phone')" placeholder="+7 (XXX) XXX-XXXX">
+                   @input="formatPhoneNumber" @keydown="handlePhoneKeyDown"
+                   @focus="handlePhoneFocus" @blur="handlePhoneBlur"
+                   placeholder="+7 (XXX) XXX-XXXX">
             <span class="error-message" v-if="errors.phone">{{ errorMessages.phone }}</span>
           </div>
           <div class="form-group" :class="{ 'error': errors.email }">
@@ -106,10 +108,69 @@ Vue.component('order-form', {
 
             if (isValid) this.$emit('submit');
         },
+        
         // Очистка ошибки для конкретного поля
         clearError(field) {
             this.errors[field] = false;
             this.errorMessages[field] = '';
+        },
+        
+        // Форматирование номера телефона
+        formatPhoneNumber() {
+            let input = this.form.phone.replace(/\D/g, '');
+            if (input.length > 0) {
+                if (!input.startsWith('7') && !input.startsWith('8')) {
+                    input = '7' + input;
+                }
+                if (input.startsWith('8')) {
+                    input = '7' + input.substring(1);
+                }
+                
+                let formatted = '+7';
+                if (input.length > 1) {
+                    formatted += ' (' + input.substring(1, 4);
+                }
+                if (input.length > 4) {
+                    formatted += ') ' + input.substring(4, 7);
+                }
+                if (input.length > 7) {
+                    formatted += '-' + input.substring(7, 11);
+                }
+                this.form.phone = formatted;
+            }
+        },
+        
+        // Обработка нажатия клавиш для телефона
+        handlePhoneKeyDown(e) {
+            // Разрешаем: backspace, delete, tab, escape, enter
+            if ([46, 8, 9, 27, 13].includes(e.keyCode) || 
+                // Разрешаем: Ctrl+A, Ctrl+C, Ctrl+X
+                (e.keyCode == 65 && e.ctrlKey === true) || 
+                (e.keyCode == 67 && e.ctrlKey === true) ||
+                (e.keyCode == 88 && e.ctrlKey === true) ||
+                // Разрешаем: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                return;
+            }
+            
+            // Запрещаем все, кроме цифр
+            if ((e.keyCode < 48 || e.keyCode > 57) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        },
+        
+        // Обработка фокуса на поле телефона
+        handlePhoneFocus() {
+            if (!this.form.phone) {
+                this.form.phone = '+7 (';
+            }
+        },
+        
+        // Обработка потери фокуса поля телефона
+        handlePhoneBlur() {
+            if (this.form.phone === '+7 (') {
+                this.form.phone = '';
+            }
         }
     }
 });
