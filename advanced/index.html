@@ -1,62 +1,86 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ru">
 <head>
-    <title>eShop</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eShop</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <header>
-        <div class="store-name">eShop</div>
-        <div class="search-box">
-            <input type="text" class="search-area" id="search-area" placeholder="Найти товары..."
-                oninput="searchGoods()">
-        </div>
-        <button class="cart-button" onclick="openCart()">Корзина</button>
+  <div id="app">
+    <!-- Шапка сайта -->
+    <header class="header">
+      <div class="header__logo">eShop</div>
+      <!-- Поле поиска товаров -->
+      <div class="header__search">
+        <input type="text" class="search-input" v-model="searchLine" placeholder="Найти товары...">
+      </div>
+      <!-- Кнопка корзины -->
+      <button class="header__cart-btn" @click="toggleCart">Корзина</button>
     </header>
-    <main>
-        <div class="goods-list"></div>
-        <div class="cart-modal" id="cartModal">
-            <div class="cart-content">
-                <div class="cart-header">
-                    <h2>Ваша корзина</h2>
-                    <span class="close-cart" onclick="closeCart()">x</span>
-                </div>
-                <div class="cart-body" id="cartItems"></div>
-                <div class="cart-footer">
-                    <div class="cart-total">
-                        <span>Итого:</span>
-                        <span id="cartTotalPrice">0₽</span>
-                    </div>
-                    <button class="checkout-btn" onclick="openCartOrder()">Оформить заказ</button>
-                </div>
-            </div>
-        </div>
-        <div class="cart-modal-order" id="cartModalOrder">
-            <div class="cart-content-order">
-                <div class="cart-header-order">
-                    <span class="close-cart-order" onclick="closeCartOrder()">↩</span>
-                    <h2>Оформление заказа</h2>
-                </div>
-                <div class="cart-body-order" id="cartItemsOrder">
-                    <span>Имя:</span>
-                    <input type="text" class="form-area" id="nameArea" placeholder="Ваше имя"
-                        oninput="removeError(this)">
-                    <span>Телефон:</span>
-                    <input type="tel" id="numberArea" name="phone" placeholder="+7 (XXX)XXX-XXXX"
-                        oninput="removeError(this)">
-                    <span>Email:</span>
-                    <input type="email" class="form-area" id="emailArea" placeholder="Ваш Email"
-                        oninput="removeError(this)">
-                </div>
-                <div class="cart-footer-order">
-                    <button class="checkout-btn-order" onclick="validateForm()">Заказать</button>
-                </div>
-            </div>
-        </div>
-    </main>
-    <script src="script.js"></script>
-</body>
 
+    <main class="main">
+      <!-- Блок с товарами -->
+      <div class="products">
+        <!-- Карточка товара -->
+        <div class="product-card" v-for="item in filteredGoods" :key="item.id_product" :data-id="item.id_product">
+          <div class="product-card__image">
+            <h4 class="product-card__title">{{ item.product_name }}</h4>
+          </div>
+          <h3 class="product-card__name">{{ item.product_name }}</h3>
+          <p class="product-card__price">{{ item.price }}₽</p>
+          <button class="product-card__add-btn" @click="addToCart(item)">Добавить в корзину</button>
+        </div>
+        <!-- Сообщение, если товары не найдены -->
+        <p class="products__empty" v-if="filteredGoods.length === 0 && searchLine">Товары по запросу "{{ searchLine }}" не найдены</p>
+      </div>
+
+      <!-- Модальное окно корзины -->
+      <div class="cart-modal" v-show="isVisibleCart">
+        <div class="cart">
+          <!-- Заголовок корзины -->
+          <div class="cart__header">
+            <h2 class="cart__title">Корзина</h2>
+            <button class="cart__close-btn" @click="isVisibleCart = false">x</button>
+          </div>
+          <!-- Тело корзины -->
+          <div class="cart__body">
+            <div v-if="isCartEmpty" class="cart-empty">Ваша корзина пуста</div>
+            <div v-else>
+              <!-- Элемент корзины -->
+              <div class="cart-item" v-for="item in cartItems" :key="item.product.id_product" :data-id="item.product.id_product">
+                <span class="cart-item__name">{{ item.product.product_name }}</span>
+                <span class="cart-item__price">{{ item.product.price }}₽ x{{ item.quantity }}</span>
+                <button class="cart-item__remove-btn" @click="removeFromCart(item.product.id_product)">x</button>
+              </div>
+            </div>
+          </div>
+          <!-- Футер корзины -->
+          <div class="cart__footer" v-if="!isCartEmpty">
+            <div class="cart-total">
+              <span class="cart-total__label">Итого:</span>
+              <span class="cart-total__value">{{ totalPrice }}₽</span>
+            </div>
+            <button class="cart__checkout-btn" @click="openCartOrder">Оформить заказ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Компонент формы заказа -->
+      <order-form :visible="isVisibleOrder" :form="orderForm" @close="closeCartOrder" @submit="submitOrder"></order-form>
+
+      <!-- Контейнер для уведомлений -->
+      <div class="notifications-container">
+        <transition-group name="notification">
+          <error-notification v-for="(notif, index) in activeNotifications" :key="notif.id"
+            :message="notif.message" :type="notif.type" @close="removeNotification(notif.id)">
+          </error-notification>
+        </transition-group>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="app.js"></script>
+</body>
 </html>
