@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Перенаправление в advanced</title>
-    <script>
-        // Перенаправление в папку advanced
-        window.location.href = 'advanced/index.html';
-    </script>
+    <title>Переходник</title>
 </head>
 <body>
-    <p>Если перенаправление не сработало, перейдите по <a href="advanced/index.html">ссылке</a>.</p>
+    <p>Нажмите на кнопку для перехода к заданиям</p>
+    <button onclick="goToShopAdvanced()">Перейти в продвинутый маркетплейс</button>
+    <button onclick="goToShopBaseLesson6()">Перейти в базовый маркетплейс</button>
+    <script>
+        function goToShopAdvanced(){
+            window.location.href = 'advanced/index.html';
+        }
+        function goToShopBaseLesson6(){
+            window.location.href = 'base/lesson6.html';
+        }  
+    </script>
 </body>
 </html>
