@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Шахматная доска</title>
+    <style>
+        .chess-board {
+            display: inline-block;
+            border: 2px solid #000000;
+        }
+        .row {
+            display: flex;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .white {
+            background-color: #000000;
+        }
+        .black {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+        }
+        .row-number {
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .column-letters {
+            display: flex;
+            margin-left: 20px;
+        }
+        .column-letter {
+            width: 50px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="chess-container"></div>
+
+    <script>
+        function createChessBoard() {
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            const container = document.getElementById('chess-container');
+            
+            // Создаем заголовки столбцов (буквы)
+            const columnLetters = document.createElement('div');
+            columnLetters.className = 'column-letters';
+            columnLetters.appendChild(document.createElement('div')).className = 'row-number';
+            
+            letters.forEach(letter => {
+                const letterElement = document.createElement('div');
+                letterElement.className = 'column-letter';
+                letterElement.textContent = letter;
+                columnLetters.appendChild(letterElement);
+            });
+            
+            container.appendChild(columnLetters);
+            
+            // Создаем саму доску
+            const board = document.createElement('div');
+            board.className = 'chess-board';
+            
+            for (let row = 8; row >= 1; row--) {
+                const rowElement = document.createElement('div');
+                rowElement.className = 'row';
+                
+                // Добавляем номер строки
+                const rowNumber = document.createElement('div');
+                rowNumber.className = 'row-number';
+                rowNumber.textContent = row;
+                rowElement.appendChild(rowNumber);
+                
+                // Добавляем клетки
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = (row + col) % 2 === 0 ? 'cell white' : 'cell black';
+                    rowElement.appendChild(cell);
+                }
+                
+                board.appendChild(rowElement);
+            }
+            
+            container.appendChild(board);
+        }
+
+        // Создаем доску при загрузке страницы
+        createChessBoard();
+    </script>
+</body>
+</html>

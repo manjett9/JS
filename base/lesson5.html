@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Задание 5</title>
+    <style>
+        .product {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            display: inline-block;
+        }
+
+        .basket {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 20px 0;
+        }
+
+        .catalog {
+            flex-wrap: wrap;
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Каталог товаров</h1>
+    <div id="catalog"></div>
+
+    <h2>Корзина</h2>
+    <div id="basket" class="basket"></div>
+
+    <script>
+        // Массив товаров
+        const products = [
+            {
+                id: 1,
+                name: "Футболка",
+                price: 999,
+                photos: [
+                    "1.jpg"
+                ]
+            },
+            {
+            id: 2,
+            name: "Джинсы", 
+            price: 1999, 
+            photos: [
+                "2.jpg",
+                "3.jpg"
+            ] 
+            },
+            { 
+            id: 3, 
+            name: "Кроссовки", 
+            price: 4999, 
+            photos: [
+                "4.jpg"
+            ] 
+            },
+            { 
+            id: 4, 
+            name: "Часы", 
+            price: 9999, 
+            photos: [
+
+            ] 
+            },
+            { id: 5, name: "Рюкзак", price: 2999, photos: [
+                "5.jpg"
+            ] }
+        ];
+
+        // Корзина
+        let basket = [];
+
+        // Функция подсчета стоимости корзины
+        function countBasketPrice(basketItems) {
+            return basketItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        }
+
+        // Функция отображения корзины
+        function renderBasket() {
+            const basketElement = document.getElementById('basket');
+
+            if (basket.length === 0) {
+                basketElement.textContent = "Корзина пуста";
+            } else {
+                const totalPrice = countBasketPrice(basket);
+                const totalItems = basket.reduce((total, item) => total + item.quantity, 0);
+
+                basketElement.innerHTML = `
+                    <p>В корзине: ${totalItems} товаров на сумму ${totalPrice} рублей</p>
+                    <ul>
+                        ${basket.map(item => `
+                            <li>${item.name} - ${item.quantity} шт. x ${item.price} руб. = ${item.quantity * item.price} руб.</li>
+                        `).join('')}
+                    </ul>
+                `;
+            }
+        }
+
+        // Функция отображения каталога
+        function renderCatalog() {
+            const catalogElement = document.getElementById('catalog');
+
+            catalogElement.innerHTML = products.map(product => `
+                <div class="product" data-id="${product.id}">
+                    <h3>${product.name}</h3>
+                    <p>Цена: ${product.price} руб.</p>
+                    ${product.photos && product.photos.length > 0 ?
+                    `<img src="${product.photos[0]}" alt="${product.name}" width="100">` :
+                    '<p>Нет изображения</p>'}
+                    <button onclick="addToBasket(${product.id})">Добавить в корзину</button>
+                </div>
+            `).join('');
+        }
+
+        // Функция добавления товара в корзину
+        function addToBasket(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = basket.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                basket.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1
+                });
+            }
+
+            renderBasket();
+        }
+            
+        renderCatalog();      
+        renderBasket();
+    </script>
+</body>
+
+</html>
