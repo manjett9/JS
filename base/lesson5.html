@@ -45,37 +45,62 @@
                 ]
             },
             {
-            id: 2,
-            name: "Джинсы", 
-            price: 1999, 
-            photos: [
-                "2.jpg",
-                "3.jpg"
-            ] 
+                id: 2,
+                name: "Джинсы", 
+                price: 1999, 
+                photos: [
+                    "2.jpg",
+                    "3.jpg"
+                ] 
             },
             { 
-            id: 3, 
-            name: "Кроссовки", 
-            price: 4999, 
-            photos: [
-                "4.jpg"
-            ] 
+                id: 3, 
+                name: "Кроссовки", 
+                price: 4999, 
+                photos: [
+                    "4.jpg"
+                ] 
             },
             { 
-            id: 4, 
-            name: "Часы", 
-            price: 9999, 
-            photos: [
+                id: 4, 
+                name: "Часы", 
+                price: 9999, 
+                photos: [
 
-            ] 
+                ] 
             },
-            { id: 5, name: "Рюкзак", price: 2999, photos: [
-                "5.jpg"
-            ] }
+            { 
+                id: 5, 
+                name: "Рюкзак", 
+                price: 2999, 
+                photos: [
+                    "5.jpg"
+                ] 
+            }
         ];
 
-        // Корзина
-        let basket = [];
+        // Корзина с добавленным свойством quantity
+        let basket = [
+            {
+                id: 1,
+                name: "Футболка",
+                price: 999,
+                photos: [
+                    "1.jpg"
+                ],
+                quantity: 1
+            },
+            {
+                id: 2,
+                name: "Джинсы", 
+                price: 1999, 
+                photos: [
+                    "2.jpg",
+                    "3.jpg"
+                ],
+                quantity: 1
+            }
+        ];
 
         // Функция подсчета стоимости корзины
         function countBasketPrice(basketItems) {
@@ -114,33 +139,13 @@
                     ${product.photos && product.photos.length > 0 ?
                     `<img src="${product.photos[0]}" alt="${product.name}" width="100">` :
                     '<p>Нет изображения</p>'}
-                    <button onclick="addToBasket(${product.id})">Добавить в корзину</button>
                 </div>
             `).join('');
-        }
-
-        // Функция добавления товара в корзину
-        function addToBasket(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-
-            const existingItem = basket.find(item => item.id === productId);
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                basket.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    quantity: 1
-                });
-            }
-
-            renderBasket();
         }
             
         renderCatalog();      
         renderBasket();
+        
     </script>
 </body>
 
