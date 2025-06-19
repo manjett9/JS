@@ -11,10 +11,8 @@
     <!-- Шапка сайта -->
     <header class="header">
       <div class="header__logo">eShop</div>
-      <!-- Поле поиска товаров -->
-      <div class="header__search">
-        <input type="text" class="search-input" v-model="searchLine" placeholder="Найти товары...">
-      </div>
+      <!-- Компонент поиска -->
+      <search-component v-model="searchLine"></search-component>
       <!-- Кнопка корзины -->
       <button class="header__cart-btn" @click="toggleCart">Корзина</button>
     </header>
@@ -35,52 +33,27 @@
         <p class="products__empty" v-if="filteredGoods.length === 0 && searchLine">Товары по запросу "{{ searchLine }}" не найдены</p>
       </div>
 
-      <!-- Модальное окно корзины -->
-      <div class="cart-modal" v-show="isVisibleCart">
-        <div class="cart">
-          <!-- Заголовок корзины -->
-          <div class="cart__header">
-            <h2 class="cart__title">Корзина</h2>
-            <button class="cart__close-btn" @click="isVisibleCart = false">x</button>
-          </div>
-          <!-- Тело корзины -->
-          <div class="cart__body">
-            <div v-if="isCartEmpty" class="cart-empty">Ваша корзина пуста</div>
-            <div v-else>
-              <!-- Элемент корзины -->
-              <div class="cart-item" v-for="item in cartItems" :key="item.product.id_product" :data-id="item.product.id_product">
-                <span class="cart-item__name">{{ item.product.product_name }}</span>
-                <span class="cart-item__price">{{ item.product.price }}₽ x{{ item.quantity }}</span>
-                <button class="cart-item__remove-btn" @click="removeFromCart(item.product.id_product)">x</button>
-              </div>
-            </div>
-          </div>
-          <!-- Футер корзины -->
-          <div class="cart__footer" v-if="!isCartEmpty">
-            <div class="cart-total">
-              <span class="cart-total__label">Итого:</span>
-              <span class="cart-total__value">{{ totalPrice }}₽</span>
-            </div>
-            <button class="cart__checkout-btn" @click="openCartOrder">Оформить заказ</button>
-          </div>
-        </div>
-      </div>
+      <!-- Компонент корзины -->
+      <cart-component 
+        :visible="isVisibleCart" 
+        :items="cartItems" 
+        :total="totalPrice" 
+        :isEmpty="isCartEmpty"
+        @toggle="toggleCart"
+        @remove="removeFromCart"
+        @checkout="openCartOrder"
+      ></cart-component>
 
       <!-- Компонент формы заказа -->
       <order-form :visible="isVisibleOrder" :form="orderForm" @close="closeCartOrder" @submit="submitOrder"></order-form>
 
-      <!-- Контейнер для уведомлений -->
-      <div class="notifications-container">
-        <transition-group name="notification">
-          <error-notification v-for="(notif, index) in activeNotifications" :key="notif.id"
-            :message="notif.message" :type="notif.type" @close="removeNotification(notif.id)">
-          </error-notification>
-        </transition-group>
-      </div>
+      <!-- Компонент уведомлений об ошибках -->
+      <error-notifications :notifications="activeNotifications" @remove="removeNotification"></error-notifications>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="components.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
