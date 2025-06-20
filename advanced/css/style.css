@@ -30,19 +30,50 @@ body {
     color: #ffffff;
 }
 
+/* Стили для поиска с крестиком */
+.header__search-wrapper {
+  flex-grow: 1;
+  margin: 0 2rem;
+  max-width: 500px;
+  position: relative;
+}
+
 .header__search {
-    flex-grow: 1;
-    margin: 0 2rem;
+  position: relative;
+  width: 100%;
 }
 
 .search-input {
-    width: 100%;
-    max-width: 500px;
-    padding: 0.6rem 1rem;
-    border: 1px solid #ffffff;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
+  width: 100%;
+  padding: 0.6rem 35px 0.6rem 1rem;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  background: #fff;
+}
+
+.search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  color: #999;
+  font-size: 1.4rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.search-clear:hover {
+  color: #333;
 }
 
 .search-input:focus {

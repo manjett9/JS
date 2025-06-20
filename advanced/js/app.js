@@ -1,3 +1,6 @@
+// URL API данных о товарах
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+
 new Vue({
   el: '#app',
   data() {
