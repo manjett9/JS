@@ -1,27 +1,23 @@
-// Компонент корзины
+//Компонент корзины
 Vue.component('cart-component', {
   props: ['visible', 'items', 'total', 'isEmpty'],
   template: `
     <div class="cart-modal" v-show="visible">
       <div class="cart">
-        <!-- Заголовок корзины -->
         <div class="cart__header">
           <h2 class="cart__title">Корзина</h2>
           <button class="cart__close-btn" @click="$emit('toggle')">&#10006;</button>
         </div>
-        <!-- Тело корзины -->
         <div class="cart__body">
           <div v-if="isEmpty" class="cart-empty">Ваша корзина пуста</div>
           <div v-else>
-            <!-- Элемент корзины -->
-            <div class="cart-item" v-for="item in items" :key="item.product.id_product" :data-id="item.product.id_product">
-              <span class="cart-item__name">{{ item.product.product_name }}</span>
-              <span class="cart-item__price">{{ item.product.price }}₽ x{{ item.quantity }}</span>
-              <button class="cart-item__remove-btn" @click="$emit('remove', item.product.id_product)">&#10006;</button>
+            <div class="cart-item" v-for="item in items" :key="item.id_product" :data-id="item.id_product">
+              <span class="cart-item__name">{{ item.product_name }}</span>
+              <span class="cart-item__price">{{ item.price }}₽ x{{ item.quantity }}</span>
+              <button class="cart-item__remove-btn" @click="$emit('remove', item.id_product)">&#10006;</button>
             </div>
           </div>
         </div>
-        <!-- Футер корзины -->
         <div class="cart__footer" v-if="!isEmpty">
           <div class="cart-total">
             <span class="cart-total__label">Итого:</span>

@@ -1,22 +1,24 @@
-// URL API данных о товарах
-const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
-
 new Vue({
   el: '#app',
   data() {
     return {
-      goods: [], // Список товаров
-      searchLine: '', // Строка поиска
-      cart: new Cart(), // Экземпляр корзины
+      goods: [],          // Массив товаров из каталога
+      searchLine: '',     // Строка поиска товаров
+      cartItems: [],      // Товары в корзине
       isVisibleCart: false, // Видимость корзины
       isVisibleOrder: false, // Видимость формы заказа
-      orderForm: { name: '', phone: '', email: '' }, // Данные формы заказа
-      notifications: [], // Список уведомлений
-      nextNotificationId: 1 // Счетчик ID для уведомлений
+      orderForm: {        // Данные формы заказа
+        name: '', 
+        phone: '', 
+        email: '' 
+      },
+      notifications: [],  // Массив уведомлений
+      nextNotificationId: 1 // Счетчик для генерации ID уведомлений
     };
   },
+  
   computed: {
-    // Фильтрация товаров по поисковому запросу
+    // Фильтрует товары по строке поиска
     filteredGoods() {
       if (!this.searchLine) return this.goods;
       try {
@@ -26,79 +28,149 @@ new Vue({
         return this.goods;
       }
     },
-    // Элементы корзины
-    cartItems() {
-      return this.cart.items; 
+    
+    // Считает общую стоимость товаров в корзине
+    totalPrice() {
+      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     },
-    // Общая стоимость товаров в корзине
-    totalPrice() { 
-      return this.cart.getTotalPrice();
+    
+    // Проверяет, пуста ли корзина
+    isCartEmpty() {
+      return this.cartItems.length === 0;
     },
-    // Проверка пустоты корзины
-    isCartEmpty() { 
-      return this.cart.items.length === 0; 
-    },
-    // Активные уведомления (в обратном порядке)
-    activeNotifications() { 
-      return this.notifications.slice().reverse(); 
+    
+    // Возвращает уведомления в обратном порядке
+    activeNotifications() {
+      return this.notifications.slice().reverse();
     }
   },
+  
   methods: {
-    // Загрузка товаров с API
-    async loadGoods() {
-      try {
-        const response = await fetch(`${API_URL}/catalogData.json`);
-        if (!response.ok) throw new Error('Ошибка загрузки');
-        this.goods = await response.json();
-      } catch (error) {
-        console.error('Ошибка:', error);
-        this.showNotification('Не удалось загрузить товары', 'error');
+    // Выполнение GET-запросов
+    makeGETRequest(url, callback) {
+      fetch(url)
+        .then(response => response.json())
+        .then(data => callback(data))
+        .catch(error => {
+          console.error('Error:', error);
+          this.showNotification('Ошибка загрузки данных', 'error');
+        });
+    },
+
+    // Выполнение POST-запросов
+    makePOSTRequest(url, data, callback) {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data => callback(data))
+        .catch(error => {
+          console.error('Error:', error);
+          this.showNotification('Ошибка выполнения операции', 'error');
+        });
+    },
+
+    // Загружает список товаров с сервера
+    loadGoods() {
+      this.makeGETRequest('/catalogData', (goods) => {
+        this.goods = goods;
+      });
+    },
+
+    // Загружает содержимое корзины с сервера
+    loadCart() {
+      this.makeGETRequest('/cartData', (cartItems) => {
+        this.cartItems = cartItems;
+      });
+    },
+
+    // Переключает видимость корзины
+    toggleCart() {
+      this.isVisibleCart = !this.isVisibleCart;
+      if (this.isVisibleCart) {
+        this.loadCart(); // При открытии корзины загружаем актуальные данные
       }
     },
-    // Переключение видимости корзины
-    toggleCart() { this.isVisibleCart = !this.isVisibleCart; },
-    // Добавление товара в корзину
+
+    // Добавляет товар в корзину
     addToCart(product) {
-      this.cart.addItem(product);
-      this.showNotification('Товар добавлен в корзину', 'success');
+      const productToAdd = {
+        id_product: product.id_product,
+        product_name: product.product_name,
+        price: product.price,
+        quantity: 1
+      };
+
+      this.makePOSTRequest('/addToCart', productToAdd, (response) => {
+        if (response.result === 1) {
+          this.showNotification('Товар добавлен в корзину', 'success');
+          this.loadCart(); // Обновляем корзину после добавления
+        } else {
+          this.showNotification('Не удалось добавить товар в корзину', 'error');
+        }
+      });
     },
-    // Удаление товара из корзины
+
+    // Удаляет товар из корзины
     removeFromCart(productId) {
-      this.cart.removeItem(productId);
-      this.showNotification('Товар удалён из корзины', 'success');
+      this.makePOSTRequest('/removeFromCart', { id_product: productId }, (response) => {
+        if (response.result === 1) {
+          this.showNotification('Товар удалён из корзины', 'success');
+          this.loadCart(); // Обновляем корзину после удаления
+        } else {
+          this.showNotification('Не удалось удалить товар из корзины', 'error');
+        }
+      });
     },
-    // Открытие формы заказа
+
+    // Открывает форму оформления заказа
     openCartOrder() {
-      if (this.cart.items.length === 0) {
+      if (this.cartItems.length === 0) {
         this.showNotification('Корзина пуста', 'error');
         return;
       }
       this.isVisibleOrder = true;
       this.isVisibleCart = false;
     },
-    // Закрытие формы заказа
+
+    // Закрывает форму оформления заказа
     closeCartOrder() { this.isVisibleOrder = false; },
-    // Оформление заказа
+
+    // Отправляет заказ на сервер
     submitOrder() {
       const total = this.totalPrice;
-      this.cart.clear();
-      this.isVisibleOrder = false;
-      this.showNotification(`Заказ оформлен! Сумма: ${total}₽`, 'success');
-      this.orderForm = { name: '', phone: '', email: '' };
+      this.makePOSTRequest('/clearCart', {}, (response) => {
+        if (response.result === 1) {
+          this.isVisibleOrder = false;
+          this.cartItems = []; // Очищаем корзину
+          this.showNotification(`Заказ оформлен! Сумма: ${total}₽`, 'success');
+          this.orderForm = { name: '', phone: '', email: '' }; // Сбрасываем форму
+        } else {
+          this.showNotification('Не удалось оформить заказ', 'error');
+        }
+      });
     },
-    // Показать уведомление
+
+    // Показывает уведомление
     showNotification(message, type) {
       const id = this.nextNotificationId++;
       this.notifications.push({ id, message, type });
+      // Удаляем уведомление через 5 секунд
       setTimeout(() => this.removeNotification(id), 5000);
     },
-    // Удалить уведомление
+
+    // Удаляет уведомление по ID
     removeNotification(id) {
       this.notifications = this.notifications.filter(notif => notif.id !== id);
     }
   },
-  // Загрузка товаров при монтировании компонента
+  
   mounted() {
-    this.loadGoods();
+    this.loadGoods();  // Загружает товары при старте
+    this.loadCart();   // Загружает корзину при старте
   }
 });
