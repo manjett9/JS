@@ -23,7 +23,7 @@
         <!-- Карточка товара -->
         <div class="product-card" v-for="item in filteredGoods" :key="item.id_product" :data-id="item.id_product">
           <div class="product-card__image">
-            <h4 class="product-card__title">{{ item.product_name }}</h4>
+            <h4 class="product-card__title">{{ item.emoji }}</h4>
           </div>
           <h3 class="product-card__name">{{ item.product_name }}</h3>
           <p class="product-card__price">{{ item.price }}₽</p>
