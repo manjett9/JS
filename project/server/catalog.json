@@ -1,0 +1,32 @@
+[
+    {
+        "id_product": 1,
+        "product_name": "Ноутбук",
+        "price": 45000,
+        "emoji": "💻"
+    },
+    {
+        "id_product": 2,
+        "product_name": "Смартфон",
+        "price": 30000,
+        "emoji": "📱"
+    },
+    {
+        "id_product": 3,
+        "product_name": "Наушники",
+        "price": 5000,
+        "emoji": "🎧"
+    },
+    {
+        "id_product": 4,
+        "product_name": "Клавиатура",
+        "price": 2500,
+        "emoji": "⌨️"
+    },
+    {
+        "id_product": 5,
+        "product_name": "Мышь",
+        "price": 1500,
+        "emoji": "🖱️"
+    }
+]
